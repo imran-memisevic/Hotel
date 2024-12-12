@@ -12,7 +12,7 @@ class Hotel {
     this.naziv = naziv
     this.adresa = adresa
     this.maxBrojSoba = maxBrojSoba
-  }
+  
 
   //Metoda koja kreira i dodaje sobe u hotel
   dodajSobe(broj, tip, cijena) {
