@@ -54,6 +54,12 @@ class Hotel {
     }
   }
 
+  ispisKorisnika() {
+    this.korisnici.forEach((korisnik) => {
+      console.log(korisnik)
+    })
+  }
+
   //Metoda koja gasi sistem tj gasi hotel
   gasenjeSistema() {
     if (this.statusSistema === false) {
@@ -115,28 +121,130 @@ class Admin {
     tipSobe,
     vrijemePrijaveUHotel,
     korisnickoIme,
-    password
+    lozinka,
+    hotel
   ) {
-    let korisnik = new Korisnik()
-    korisnik.ime = ime
-    korisnik.prezime = prezime
-    korisnik.spol = spol
-    korisnik.brojLicneKarte = brojLicneKarte
-    korisnik.godine = godine
-    korisnik.borjSobe = brojSobe
+    let korisnik = new Korisnik(
+      ime,
+      prezime,
+      spol,
+      brojLicneKarte,
+      godine,
+      brojSobe,
+      tipSobe,
+      vrijemePrijaveUHotel,
+      korisnickoIme,
+      lozinka
+    )
+
+    hotel.korisnici.push(korisnik)
+  }
+
+  urediKorisnika(korisnik, brojSobe, tipSobe, usluga, callback) {
+    korisnik.brojSobe = brojSobe
     korisnik.tipSobe = tipSobe
-    korisnik.vrijemePrijaveUHotel = vrijemePrijaveUHotel
-    korisnik.korisnickoIme = korisnickoIme
-    korisnik.password = password
+    callback(usluga)
+  }
+
+  urediKorisnickeUsluge(korisnik, usluga, callback) {
+    callback(usluga)
+  }
+
+  izdajRacun(korisnik) {
+    let racun = 0
+    for (let i = 0; i < korisnik.usluge.length; i++) {
+      racun += korisnik.usluge[i].cijenaPoDanu
+    }
+    console.log(`Račun za ${korisnik.ime} ${korisnik.prezime}.
+_____________________________________________
+                 `)
+    for (let i = 0; i < korisnik.usluge.length; i++) {
+      console.log(
+        `${korisnik.usluge[i].tip}: ${korisnik.usluge[i].cijenaPoDanu}KM`
+      )
+    }
+    console.log(`_____________________________________________
+
+ ${racun}KM`)
   }
 }
 
+class Korisnik {
+  ime
+  prezime
+  spol
+  #brijLičneKarte
+  godine
+  brojSobe
+  tipSobe
+  vrijemePrijaveUHotel
+  #korisnickoIme
+  #lozinka
+  usluge = []
+
+  constructor(
+    ime,
+    prezime,
+    spol,
+    brojLicneKarte,
+    godine,
+    brojSobe,
+    tipSobe,
+    vrijemePrijaveUHotel,
+    korisnickoIme,
+    lozinka
+  ) {
+    this.#brijLičneKarte = brojLicneKarte
+    this.brojSobe = brojSobe
+    this.godine = godine
+    this.ime = ime
+    this.#korisnickoIme = korisnickoIme
+    this.#lozinka = lozinka
+    this.prezime = prezime
+    this.spol = spol
+    this.tipSobe = tipSobe
+    this.vrijemePrijaveUHotel = vrijemePrijaveUHotel
+  }
+}
+
+//Provjera programa
 let hotel = new Hotel('Hotel Sunce', 'Kralja Tomislava 54 88390 Neum', 100)
 hotel.dodajSobe(1, 'Jednokrevetna', 20)
 hotel.dodajSobe(2, 'Dvokrevetna', 40)
 hotel.dodajSobe(3, 'Jednokrevetna', 20)
 hotel.dodajUslugu('Teretana', 10)
 hotel.dodajUslugu('Kino', 10)
+hotel.dodajUslugu('Restoran', 20)
+hotel.dodajUslugu('Bazen', 10)
+hotel.dodajUslugu('Sauna', 10)
 
 hotel.ispisSoba()
 hotel.ispisUsluga()
+
+let admin = new Admin('Emina')
+
+admin.registracijaKorisnika(
+  'Alma',
+  'Mumić',
+  'ž',
+  '15OK043',
+  18,
+  1,
+  'Jednokrevetna',
+  '12.12.2024',
+  'almica',
+  'almica123',
+  hotel
+)
+let alma = hotel.korisnici[0]
+
+hotel.ispisKorisnika()
+let teretana = hotel.usluge[0]
+let kino = hotel.usluge[1]
+admin.urediKorisnika(alma, 2, 'Dvokrevetna', teretana, (teretana) => {
+  alma.usluge.push(teretana)
+})
+
+admin.urediKorisnickeUsluge(alma, kino, (kino) => alma.usluge.push(kino))
+hotel.ispisKorisnika()
+admin.izdajRacun(alma)
