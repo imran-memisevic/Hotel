@@ -155,7 +155,17 @@ class Admin {
     for (let i = 0; i < korisnik.usluge.length; i++) {
       racun += korisnik.usluge[i].cijenaPoDanu
     }
-    console.log(racun)
+    console.log(`Račun za ${korisnik.ime} ${korisnik.prezime}.
+_____________________________________________
+                 `)
+    for (let i = 0; i < korisnik.usluge.length; i++) {
+      console.log(
+        `${korisnik.usluge[i].tip}: ${korisnik.usluge[i].cijenaPoDanu}KM`
+      )
+    }
+    console.log(`_____________________________________________
+
+ ${racun}KM`)
   }
 }
 
