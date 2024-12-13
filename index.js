@@ -16,7 +16,7 @@ class Hotel {
 
   //Metoda koja kreira i dodaje sobe u hotel
   dodajSobe(broj, tip, cijena) {
-    if ((this.statusSistema === true)) {
+    if (this.statusSistema === true) {
       let soba = new Soba(broj, tip, cijena)
       this.sobe.push(soba)
     } else {
@@ -26,7 +26,7 @@ class Hotel {
 
   //Dodaje usluge u hotel koje se mogu odabrati
   dodajUslugu(tip, cijenaPoDanu) {
-    if ((this.statusSistema === true)) {
+    if (this.statusSistema === true) {
       let usluga = new Usluga(tip, cijenaPoDanu)
       this.usluge.push(usluga)
     } else {
@@ -40,7 +40,7 @@ class Hotel {
         console.log(soba)
       })
     } else {
-      console.log("Nije moguce ispisati sobe, sistem nije aktivan")
+      console.log('Nije moguce ispisati sobe, sistem nije aktivan')
     }
   }
 
@@ -49,8 +49,8 @@ class Hotel {
       this.usluge.forEach((usluga) => {
         console.log(usluga)
       })
-    }else {
-      console.log("Nije moguce ispisati usluge, sistem nije aktivan")
+    } else {
+      console.log('Nije moguce ispisati usluge, sistem nije aktivan')
     }
   }
 
@@ -63,16 +63,15 @@ class Hotel {
     this.statusSistema = false
     console.log('Sistem je ugasen')
   }
-}
 
-aktiviranjeSistema() {
-  if (this.statusSistema === true) {
-    console.log('Sistem je vec aktivan')
-    return 0
+  aktiviranjeSistema() {
+    if (this.statusSistema === true) {
+      console.log('Sistem je vec aktivan')
+      return 0
+    }
+    this.statusSistema = true
+    console.log('Sistem je aktiviran')
   }
-  this.statusSistema = true
-  console.log('Sistem je aktiviran')
-}
 }
 
 //Klasa za kreiranje noih soba(jednokrevetne, dvokrevet itd)
