@@ -139,19 +139,38 @@ class Admin {
 
     hotel.korisnici.push(korisnik)
   }
+
+  urediKorisnika(korisnik, brojSobe, tipSobe, usluga, callback) {
+    korisnik.brojSobe = brojSobe
+    korisnik.tipSobe = tipSobe
+    callback(usluga)
+  }
+
+  urediKorisnickeUsluge(korisnik, usluga, callback) {
+    callback(usluga)
+  }
+
+  izdajRacun(korisnik) {
+    let racun = 0
+    for (let i = 0; i < korisnik.usluge.length; i++) {
+      racun += korisnik.usluge[i].cijenaPoDanu
+    }
+    console.log(racun)
+  }
 }
 
 class Korisnik {
   ime
   prezime
   spol
-  brijLičneKarte
+  #brijLičneKarte
   godine
   brojSobe
   tipSobe
   vrijemePrijaveUHotel
-  korisnickoIme
-  lozinka
+  #korisnickoIme
+  #lozinka
+  usluge = []
 
   constructor(
     ime,
@@ -165,12 +184,12 @@ class Korisnik {
     korisnickoIme,
     lozinka
   ) {
-    this.brijLičneKarte = brojLicneKarte
+    this.#brijLičneKarte = brojLicneKarte
     this.brojSobe = brojSobe
     this.godine = godine
     this.ime = ime
-    this.korisnickoIme = korisnickoIme
-    this.lozinka = lozinka
+    this.#korisnickoIme = korisnickoIme
+    this.#lozinka = lozinka
     this.prezime = prezime
     this.spol = spol
     this.tipSobe = tipSobe
@@ -178,6 +197,7 @@ class Korisnik {
   }
 }
 
+//Provjera programa
 let hotel = new Hotel('Hotel Sunce', 'Kralja Tomislava 54 88390 Neum', 100)
 hotel.dodajSobe(1, 'Jednokrevetna', 20)
 hotel.dodajSobe(2, 'Dvokrevetna', 40)
@@ -206,5 +226,15 @@ admin.registracijaKorisnika(
   'almica123',
   hotel
 )
+let alma = hotel.korisnici[0]
 
 hotel.ispisKorisnika()
+let teretana = hotel.usluge[0]
+let kino = hotel.usluge[1]
+admin.urediKorisnika(alma, 2, 'Dvokrevetna', teretana, (teretana) => {
+  alma.usluge.push(teretana)
+})
+
+admin.urediKorisnickeUsluge(alma, kino, (kino) => alma.usluge.push(kino))
+hotel.ispisKorisnika()
+admin.izdajRacun(alma)
