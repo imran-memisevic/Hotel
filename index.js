@@ -54,6 +54,12 @@ class Hotel {
     }
   }
 
+  ispisKorisnika() {
+    this.korisnici.forEach((korisnik) => {
+      console.log(korisnik)
+    })
+  }
+
   //Metoda koja gasi sistem tj gasi hotel
   gasenjeSistema() {
     if (this.statusSistema === false) {
@@ -115,19 +121,60 @@ class Admin {
     tipSobe,
     vrijemePrijaveUHotel,
     korisnickoIme,
-    password
+    lozinka,
+    hotel
   ) {
-    let korisnik = new Korisnik()
-    korisnik.ime = ime
-    korisnik.prezime = prezime
-    korisnik.spol = spol
-    korisnik.brojLicneKarte = brojLicneKarte
-    korisnik.godine = godine
-    korisnik.borjSobe = brojSobe
-    korisnik.tipSobe = tipSobe
-    korisnik.vrijemePrijaveUHotel = vrijemePrijaveUHotel
-    korisnik.korisnickoIme = korisnickoIme
-    korisnik.password = password
+    let korisnik = new Korisnik(
+      ime,
+      prezime,
+      spol,
+      brojLicneKarte,
+      godine,
+      brojSobe,
+      tipSobe,
+      vrijemePrijaveUHotel,
+      korisnickoIme,
+      lozinka
+    )
+
+    hotel.korisnici.push(korisnik)
+  }
+}
+
+class Korisnik {
+  ime
+  prezime
+  spol
+  brijLičneKarte
+  godine
+  brojSobe
+  tipSobe
+  vrijemePrijaveUHotel
+  korisnickoIme
+  lozinka
+
+  constructor(
+    ime,
+    prezime,
+    spol,
+    brojLicneKarte,
+    godine,
+    brojSobe,
+    tipSobe,
+    vrijemePrijaveUHotel,
+    korisnickoIme,
+    lozinka
+  ) {
+    this.brijLičneKarte = brojLicneKarte
+    this.brojSobe = brojSobe
+    this.godine = godine
+    this.ime = ime
+    this.korisnickoIme = korisnickoIme
+    this.lozinka = lozinka
+    this.prezime = prezime
+    this.spol = spol
+    this.tipSobe = tipSobe
+    this.vrijemePrijaveUHotel = vrijemePrijaveUHotel
   }
 }
 
@@ -143,3 +190,21 @@ hotel.dodajUslugu('Sauna', 10)
 
 hotel.ispisSoba()
 hotel.ispisUsluga()
+
+let admin = new Admin('Emina')
+
+admin.registracijaKorisnika(
+  'Alma',
+  'Mumić',
+  'ž',
+  '15OK043',
+  18,
+  1,
+  'Jednokrevetna',
+  '12.12.2024',
+  'almica',
+  'almica123',
+  hotel
+)
+
+hotel.ispisKorisnika()
