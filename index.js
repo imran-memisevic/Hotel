@@ -16,35 +16,61 @@ class Hotel {
 
   //Metoda koja kreira i dodaje sobe u hotel
   dodajSobe(broj, tip, cijena) {
-    let soba = new Soba(broj, tip, cijena)
-    this.sobe.push(soba)
+    if (this.statusSistema === true) {
+      let soba = new Soba(broj, tip, cijena)
+      this.sobe.push(soba)
+    } else {
+      console.log('Sistem nije aktivan, nije moguce dodavati sobe u isti')
+    }
   }
 
   //Dodaje usluge u hotel koje se mogu odabrati
   dodajUslugu(tip, cijenaPoDanu) {
-    let usluga = new Usluga(tip, cijenaPoDanu)
-    this.usluge.push(usluga)
+    if (this.statusSistema === true) {
+      let usluga = new Usluga(tip, cijenaPoDanu)
+      this.usluge.push(usluga)
+    } else {
+      console.log('Sistem nije aktivan, nije moguce dodati usluge u isti.')
+    }
   }
 
   ispisSoba() {
-    this.sobe.forEach((soba) => {
-      console.log(soba)
-    })
+    if (this.statusSistema === true) {
+      this.sobe.forEach((soba) => {
+        console.log(soba)
+      })
+    } else {
+      console.log('Nije moguce ispisati sobe, sistem nije aktivan')
+    }
   }
 
   ispisUsluga() {
-    this.usluge.forEach((usluga) => {
-      console.log(usluga)
-    })
+    if (this.statusSistema === true) {
+      this.usluge.forEach((usluga) => {
+        console.log(usluga)
+      })
+    } else {
+      console.log('Nije moguce ispisati usluge, sistem nije aktivan')
+    }
   }
 
   //Metoda koja gasi sistem tj gasi hotel
   gasenjeSistema() {
     if (this.statusSistema === false) {
       console.log('Sistem je vec ugasen')
+      return 0
     }
     this.statusSistema = false
     console.log('Sistem je ugasen')
+  }
+
+  aktiviranjeSistema() {
+    if (this.statusSistema === true) {
+      console.log('Sistem je vec aktivan')
+      return 0
+    }
+    this.statusSistema = true
+    console.log('Sistem je aktiviran')
   }
 }
 
