@@ -279,3 +279,4 @@ hotel.ispisKorisnika()
 admin.izdajRacun(alma)
 
 console.log(hotel.sobe)
+console.log('probica')
