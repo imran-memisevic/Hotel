@@ -5,6 +5,7 @@ class Hotel {
     this.maxBrojSoba = maxBrojSoba
     this.korisnici = new Map()
     this.sobe = new Map()
+    this.aktivniKorisnici = new Map()
     this.usluge = []
     this.rezervacije = []
     this.statusSistema = true
@@ -49,17 +50,13 @@ class Hotel {
   ispisKorisnika() {
     this.korisnici.forEach((korisnik, brojLicneKarte) => {
       console.log(`Broj lične: ${brojLicneKarte}`, korisnik)
-    })
+    }
+  )
+  
+  
   }
 
-  gasenjeSistema() {
-    if (!this.statusSistema) {
-      console.log('Sistem je već ugašen.')
-      return
-    }
-    this.statusSistema = false
-    console.log('Sistem je ugašen.')
-  }
+ 
 
   aktiviranjeSistema() {
     if (this.statusSistema) {
@@ -140,6 +137,42 @@ class Admin {
     korisnik.tipSobe = tipSobe
     callback(usluga)
   }
+  odjavikorisnika(Hotel,brojLicneKarte){
+    Hotel.korisnici.delete(brojLicneKarte);
+  console.log('korisnik obrisan');
+  }
+  izlogujKorisnika(Hotel,brojLicneKarte){
+    Hotel.aktivniKorisnici.delete(Hotel,brojLicneKarte);
+  }
+  gasenjeSistema() {
+    if(Hotel.statusSistema == true){
+      Hotel.statusSistema = false;
+      console.log('Sistem je ugasen');
+      
+    }
+    else if (!Hotel.statusSistema) {
+      console.log('Sistem je već ugašen.')
+      return
+    } 
+  }
+  provjeraAktivnihKorisnika(Hotel){
+    console.log(Hotel.aktivniKorisnici);
+    
+  }
+ 
+
+  pretrazikorisnika(Hotel, brojLicneKarte) {
+   
+    if (Hotel.korisnici.has(brojLicneKarte)) {
+        const korisnik = Hotel.korisnici.get(brojLicneKarte);
+        console.log("Korisnik pronadjen:", korisnik);
+       
+        return korisnik;
+    } else {
+        console.log("User not found.");
+        return null;
+    }
+}
 
   urediKorisnickeUsluge(korisnik, usluga, callback) {
     callback(usluga)
@@ -261,10 +294,23 @@ admin.registracijaKorisnika(
   'almica123',
   hotel
 )
+admin.registracijaKorisnika(
+  'Almir',
+  'Mumić',
+  'M',
+  '15OK042',
+  18,
+  1,
+  'Jednokrevetna',
+  '12.12.2024',
+  'almir',
+  'almir123',
+  hotel
+)
 
 let alma = hotel.korisnici.get('15OK043')
 
-hotel.ispisKorisnika()
+
 
 let teretana = hotel.usluge[0]
 let kino = hotel.usluge[1]
@@ -275,8 +321,11 @@ admin.urediKorisnika(alma, 2, 'Dvokrevetna', teretana, (usluga) => {
 
 admin.urediKorisnickeUsluge(alma, kino, (usluga) => alma.usluge.push(usluga))
 
-hotel.ispisKorisnika()
+
 admin.izdajRacun(alma)
 
 console.log(hotel.sobe)
-console.log('probica')
+
+
+hotel.ispisKorisnika()
+admin.pretrazikorisnika(hotel,'15OK043')
