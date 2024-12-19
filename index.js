@@ -137,34 +137,34 @@ class Admin {
     korisnik.tipSobe = tipSobe
     callback(usluga)
   }
-  odjavikorisnika(Hotel,brojLicneKarte){
-    Hotel.korisnici.delete(brojLicneKarte);
+  odjavikorisnika(hotel,brojLicneKarte){
+    hotel.korisnici.delete(brojLicneKarte);
   console.log('korisnik obrisan');
   }
-  izlogujKorisnika(Hotel,brojLicneKarte){
-    Hotel.aktivniKorisnici.delete(Hotel,brojLicneKarte);
+  izlogujKorisnika(hotel,brojLicneKarte){
+    hotel.aktivniKorisnici.delete(hotel,brojLicneKarte);
   }
-  gasenjeSistema() {
-    if(Hotel.statusSistema == true){
-      Hotel.statusSistema = false;
+  gasenjeSistema(hotel) {
+    if(hotel.statusSistema == true){
+      hotel.statusSistema = false;
       console.log('Sistem je ugasen');
       
     }
-    else if (!Hotel.statusSistema) {
+    else if (!hotel.statusSistema) {
       console.log('Sistem je već ugašen.')
       return
     } 
   }
-  provjeraAktivnihKorisnika(Hotel){
-    console.log(Hotel.aktivniKorisnici);
+  provjeraAktivnihKorisnika(hotel){
+    console.log(hotel.aktivniKorisnici);
     
   }
  
 
-  pretrazikorisnika(Hotel, brojLicneKarte) {
+  pretrazikorisnika(hotel, brojLicneKarte) {
    
-    if (Hotel.korisnici.has(brojLicneKarte)) {
-        const korisnik = Hotel.korisnici.get(brojLicneKarte);
+    if (hotel.korisnici.has(brojLicneKarte)) {
+        const korisnik = hotel.korisnici.get(brojLicneKarte);
         console.log("Korisnik pronadjen:", korisnik);
        
         return korisnik;
