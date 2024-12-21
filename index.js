@@ -5,7 +5,7 @@ class Hotel {
     this.maxBrojSoba = maxBrojSoba
     this.korisnici = new Map()
     this.sobe = new Map()
-    this.usluge = []
+    this.usluge = new Map()
     this.rezervacije = []
     this.statusSistema = true
   }
@@ -21,10 +21,10 @@ class Hotel {
   }
 
   // Dodaje usluge u hotel koje se mogu odabrati
-  dodajUslugu(tip, cijenaPoDanu) {
+  dodajUslugu(tip, cijenaPoDanu, ID) {
     if (this.statusSistema) {
       let usluga = new Usluga(tip, cijenaPoDanu)
-      this.usluge.push(usluga)
+      this.usluge.set(ID, usluga)
     } else {
       console.log('Sistem nije aktivan, nije moguće dodati usluge.')
     }
@@ -100,7 +100,7 @@ class Admin {
     this.ime = ime
   }
 
-  registracijaKorisnika(
+  registracijaKorisnika({
     ime,
     prezime,
     spol,
@@ -111,8 +111,8 @@ class Admin {
     vrijemePrijaveUHotel,
     korisnickoIme,
     lozinka,
-    hotel
-  ) {
+    hotel,
+  }) {
     if (hotel.korisnici.has(brojLicneKarte)) {
       console.log('Korisnik sa ovim brojem lične karte već postoji.')
       return
@@ -236,38 +236,36 @@ class Korisnik {
 let hotel = new Hotel('Hotel Sunce', 'Kralja Tomislava 54, Neum', 100)
 hotel.dodajSobe(1, 'Jednokrevetna', 20, '11')
 hotel.dodajSobe(2, 'Dvokrevetna', 40, '12')
-hotel.dodajSobe(3, 'Jednokrevetna', 20, '13')
-hotel.dodajUslugu('Teretana', 10)
-hotel.dodajUslugu('Kino', 10)
-hotel.dodajUslugu('Restoran', 20)
-hotel.dodajUslugu('Bazen', 10)
-hotel.dodajUslugu('Sauna', 10)
+
+hotel.dodajUslugu('Teretana', 10, '1')
+hotel.dodajUslugu('Kino', 10, '2')
+hotel.dodajUslugu('Restoran', 20, '3')
 
 hotel.ispisSoba()
 hotel.ispisUsluga()
 
 let admin = new Admin('Emina')
 
-admin.registracijaKorisnika(
-  'Alma',
-  'Mumić',
-  'Ž',
-  '15OK043',
-  18,
-  1,
-  'Jednokrevetna',
-  '12.12.2024',
-  'almica',
-  'almica123',
-  hotel
-)
+admin.registracijaKorisnika({
+  brojLicneKarte: '15ODSP',
+  brojSobe: 1,
+  godine: 18,
+  hotel: hotel,
+  ime: 'Alma',
+  korisnickoIme: 'almamumic',
+  lozinka: '123456789',
+  prezime: 'Mumić',
+  spol: 'Ž',
+  tipSobe: 'Jednokrevetna',
+  vrijemePrijaveUHotel: '12.11.2024',
+})
 
 let alma = hotel.korisnici.get('15OK043')
 
 hotel.ispisKorisnika()
 
-let teretana = hotel.usluge[0]
-let kino = hotel.usluge[1]
+let teretana = hotel.usluge.get('1')
+let kino = hotel.usluge.get('2')
 
 admin.urediKorisnika(alma, 2, 'Dvokrevetna', teretana, (usluga) => {
   alma.usluge.push(usluga)
