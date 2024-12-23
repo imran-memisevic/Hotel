@@ -11,16 +11,17 @@ let soba102 = hotel.dodajSobe(102, 'Dvokrevetna', 100)
 
 hotel.dodajUslugu('Teretana', 10)
 hotel.dodajUslugu('Kino', 20)
+hotel.dodajUslugu('Bazen', 30)
 
 const admin = new Admin('Emina')
 let emina = admin.registracijaKorisnika(
   'Emina',
-  'MUmic',
+  'Mumic',
   'Ž',
   'OK123',
   21,
   101,
-  'JednoKrevetna',
+  'Jednokrevetna',
   'emina',
   '123',
   soba101,
@@ -31,5 +32,6 @@ emina.naruciUslugu('Teretana', hotel)
 emina.koristiUslugu('Teretana')
 emina.naruciUslugu('Kino', hotel)
 emina.produziDanBoravka()
-emina.produziDanBoravka()
+
 admin.izdajRacun(emina)
+admin.provjeraAktivnihKorisnika(hotel)
