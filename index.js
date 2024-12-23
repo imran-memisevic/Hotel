@@ -6,30 +6,31 @@ class Hotel {
     this.korisnici = new Map()
     this.sobe = new Map()
     this.usluge = new Map()
-    this.rezervacije = []
+    this.aktivniKorisnici = new Map()
+    this.rezervacije = new Map()
     this.statusSistema = true
   }
 
   // Metoda koja kreira i dodaje sobe u hotel
-  dodajSobe(broj, tip, cijena, ID) {
+  dodajSobe(broj, tip, cijena) {
     if (this.statusSistema) {
       let soba = new Soba(broj, tip, cijena)
-      this.sobe.set(ID, soba)
+      this.sobe.set(broj, soba)
     } else {
       console.log('Sistem nije aktivan, nije moguće dodavati sobe.')
     }
   }
 
   // Dodaje usluge u hotel koje se mogu odabrati
-  dodajUslugu(tip, cijenaPoDanu, ID) {
+  dodajUslugu(tip, cijenaPoDanu) {
     if (this.statusSistema) {
       let usluga = new Usluga(tip, cijenaPoDanu)
-      this.usluge.set(ID, usluga)
+      this.usluge.set(tip, usluga)
     } else {
       console.log('Sistem nije aktivan, nije moguće dodati usluge.')
     }
   }
-
+  //Ispis svih soba u hotelu
   ispisSoba() {
     if (this.statusSistema) {
       this.sobe.forEach((soba) => console.log(soba))
@@ -37,7 +38,7 @@ class Hotel {
       console.log('Nije moguće ispisati sobe, sistem nije aktivan.')
     }
   }
-
+  //Ispis svih usluga hotela
   ispisUsluga() {
     if (this.statusSistema) {
       this.usluge.forEach((usluga) => console.log(usluga))
@@ -45,29 +46,22 @@ class Hotel {
       console.log('Nije moguće ispisati usluge, sistem nije aktivan.')
     }
   }
-
+  //Ispis svih korisnika sistema
   ispisKorisnika() {
-    this.korisnici.forEach((korisnik, brojLicneKarte) => {
-      console.log(`Broj lične: ${brojLicneKarte}`, korisnik)
-    })
-  }
-
-  gasenjeSistema() {
-    if (!this.statusSistema) {
-      console.log('Sistem je već ugašen.')
-      return
+    if (this.statusSistema) {
+      this.korisnici.forEach((korisnik) => console.log(korisnik))
+    } else {
+      console.log('Nije moguce ispisati korisnike, sistem nije aktivan')
     }
-    this.statusSistema = false
-    console.log('Sistem je ugašen.')
   }
-
+  //Aktiviranje sistema
   aktiviranjeSistema() {
     if (this.statusSistema) {
       console.log('Sistem je već aktivan.')
-      return
+    } else {
+      this.statusSistema = true
+      console.log('Sistem je aktiviran.')
     }
-    this.statusSistema = true
-    console.log('Sistem je aktiviran.')
   }
 }
 
@@ -80,15 +74,27 @@ class Soba {
   }
 
   oslobodi() {
-    this.dostupnost = true
+    if (this.dostupnost) {
+      console.log('Soba je vec dostupna')
+    } else {
+      this.dostupnost = true
+      console.log('Soba je oslobodjena')
+    }
   }
 
   rezervisi() {
-    this.dostupnost = false
+    if (!this.dostupnost) {
+      console.log('Soba je vec rezervisana')
+    } else {
+      this.dostupnost = false
+      console.log('Soba je rezervisana')
+    }
   }
 }
 
 class Usluga {
+  brojKoristenja
+  datumPocetka
   constructor(tip, cijenaPoDanu) {
     this.tip = tip
     this.cijenaPoDanu = cijenaPoDanu
@@ -99,8 +105,8 @@ class Admin {
   constructor(ime) {
     this.ime = ime
   }
-
-  registracijaKorisnika({
+  //Registrovanje korisnika u sistem
+  registracijaKorisnika(
     ime,
     prezime,
     spol,
@@ -111,13 +117,21 @@ class Admin {
     vrijemePrijaveUHotel,
     korisnickoIme,
     lozinka,
-    hotel,
-  }) {
-    if (hotel.korisnici.has(brojLicneKarte)) {
-      console.log('Korisnik sa ovim brojem lične karte već postoji.')
-      return
+    soba,
+    hotel
+  ) {
+    if (hotel.korisnici.has(korisnickoIme)) {
+      console.log('Korisničko ime već postoji. Molimo izaberite drugo.')
+      return null
     }
 
+    if (hotel.sobe.has(brojSobe)) {
+      let soba = hotel.sobe.get(brojSobe)
+      if (!soba.dostupnost) {
+        console.log('Soba je već zauzeta. Molimo izaberite drugu sobu.')
+        return null
+      }
+    }
     let korisnik = new Korisnik(
       ime,
       prezime,
@@ -128,36 +142,109 @@ class Admin {
       tipSobe,
       vrijemePrijaveUHotel,
       korisnickoIme,
-      lozinka
+      lozinka,
+      soba
     )
 
     hotel.korisnici.set(brojLicneKarte, korisnik)
+    hotel.sobe.get(brojSobe).rezervisi()
     console.log(`Korisnik ${ime} ${prezime} uspješno registrovan.`)
   }
-
-  urediKorisnika(korisnik, brojSobe, tipSobe, usluga, callback) {
+  //Uredjivanje korisnika
+  urediKorisnika(korisnik, brojSobe, tipSobe, akcija, usluga) {
     korisnik.brojSobe = brojSobe
     korisnik.tipSobe = tipSobe
-    callback(usluga)
+
+    if (akcija === 'obrisi') {
+      korisnik.usluge.has(usluga)
+        ? korisnik.usluge.delete(usluga)
+        : console.log(`Usluga ${usluga} nije pronadjena`)
+    } else if (akcija === 'dodaj') {
+      korisnik.usluge.has(usluga)
+        ? console.log('Korisnik vec koristi tu uslugu')
+        : korisnik.usluge.set(usluga)
+    } else {
+      console.log('Nepoznata akcija. Koristite "dodaj" ili "obrisi".')
+    }
+  }
+  //Brisanje korisnika iz sistema
+  odjaviKorisnika(hotel, brojLicneKarte) {
+    let korisnik = hotel.korisnici.get(brojLicneKarte)
+    let soba = hotel.sobe.get(korisnik.brojSobe)
+    hotel.korisnici.delete(brojLicneKarte)
+    korisnik.odjaviSe()
+    soba.oslobodi()
+    console.log(`Korisnik obrisan`)
+  }
+  //Izloguj aktivnog korisnika
+  izlogujKorisnika(hotel, brojLicneKarte) {
+    hotel.aktivniKorisnici.delete(brojLicneKarte)
+    console.log('korisnik izlogovan')
   }
 
-  urediKorisnickeUsluge(korisnik, usluga, callback) {
-    callback(usluga)
+  izlogujSveKorisnike() {
+    hotel.aktivniKorisnici.clear()
+    console.log('Svi korisnici su izlogovani')
+  }
+  //Gasenje sistema i izlogovanje korisnika
+  gasenjeSistema(hotel) {
+    if (hotel.statusSistema) {
+      hotel.statusSistema = false
+      hotel.aktivniKorisnici.clear()
+      console.log('Sistem je ugasen')
+    } else if (!hotel.statusSistema) {
+      console.log('Sistem je već ugašen.')
+      return
+    }
+  }
+  provjeraAktivnihKorisnika(hotel) {
+    console.log(hotel.aktivniKorisnici)
+  }
+
+  pretrazikorisnika(hotel, brojLicneKarte) {
+    if (hotel.korisnici.has(brojLicneKarte)) {
+      const korisnik = hotel.korisnici.get(brojLicneKarte)
+      console.log('Korisnik pronadjen:', korisnik)
+
+      return korisnik
+    } else {
+      console.log('Korisnik nije pronadjen')
+      return null
+    }
   }
 
   izdajRacun(korisnik) {
-    let racun = 0
-    korisnik.usluge.forEach((usluga) => (racun += usluga.cijenaPoDanu))
+    let ukupnoDugovanje = 0
 
-    console.log(`Račun za ${korisnik.ime} ${korisnik.prezime}.
-_____________________________________________
-                 `)
+    // Izračunavanje duga za boravak u sobi
+    let dugZaSobu = korisnik.daniBoravka * korisnik.soba.cijena
+    ukupnoDugovanje += dugZaSobu
+
+    // Dodavanje duga za usluge
     korisnik.usluge.forEach((usluga) => {
-      console.log(`${usluga.tip}: ${usluga.cijenaPoDanu} KM`)
+      ukupnoDugovanje += usluga.cijenaPoDanu * usluga.brojKoristenja
     })
-    console.log(`_____________________________________________
 
- ${racun} KM`)
+    // Ažuriranje korisnikovog ukupnog duga
+    korisnik.dug = ukupnoDugovanje
+
+    // Ispis računa
+    console.log(`Račun za korisnika: ${korisnik.ime} ${korisnik.prezime}`)
+    console.log(`_____________________________________________`)
+    console.log(`Dug za sobu: ${dugZaSobu} KM`)
+
+    if (korisnik.usluge.length > 0) {
+      console.log(`Usluge:`)
+      korisnik.usluge.forEach((usluga) => {
+        const dugZaUslugu = usluga.cijenaPoDanu * usluga.brojKoristenja
+        console.log(
+          `${usluga.tip}: ${dugZaUslugu} KM (${usluga.cijenaPoDanu} KM/dan x ${usluga.brojKoristenja} dana)`
+        )
+      })
+    }
+
+    console.log(`_____________________________________________`)
+    console.log(`Ukupno dugovanje: ${ukupnoDugovanje} KM`)
   }
 }
 
@@ -165,6 +252,8 @@ class Korisnik {
   #brojLicneKarte
   #korisnickoIme
   #lozinka
+  usluge = new Map()
+  daniBoravka = 0
 
   constructor(
     ime,
@@ -176,7 +265,8 @@ class Korisnik {
     tipSobe,
     vrijemePrijaveUHotel,
     korisnickoIme,
-    lozinka
+    lozinka,
+    soba
   ) {
     this.ime = ime
     this.prezime = prezime
@@ -188,93 +278,75 @@ class Korisnik {
     this.vrijemePrijaveUHotel = vrijemePrijaveUHotel
     this.#korisnickoIme = korisnickoIme
     this.#lozinka = lozinka
-    this.usluge = []
+    this.soba = soba
+    this.dug = 0
   }
 
   provjeriDug() {
     console.log(`Trenutni dug je: ${this.dug}KM`)
   }
-  naruciUslugu(imeUsluge) {
-    this.usluge.push(imeUsluge)
-    this.dug += cijenaUsluge[imeUsluge]
+
+  naruciUslugu(imeUsluge, hotel) {
+    if (hotel.usluge.has(imeUsluge)) {
+      let narucenaUsluga = hotel.usluge.get(imeUsluge)
+      this.usluge.set(imeUsluge, narucenaUsluga)
+      ;(narucenaUsluga.brojKoristenja = 1),
+        (narucenaUsluga.datumPocetka = new Date())
+    } else {
+      console.log('Usluga ne postoji u hotelu')
+    }
+
     console.log(`Usluga ${imeUsluge} uspješno dodana`)
   }
-  //dodaj uslugu
-  trenutneUsluge() {
-    console.log(`Usluge koje se trenutno koriste su: ${this.usluge.join(`, `)}`)
-  } //clg usluge koje se koriste
-  uslugeCijenaPoDanu() {
-    console.log('Teretana: 10 KM')
-    console.log('Kino: 10 KM')
-    console.log('Restoran: 20 KM')
-    console.log('Bazen: 10 KM')
-    console.log('Sauna: 10 KM')
-  } //clg usluge
 
-  promjeniSobu(tipSobe) {
-    const dostupneSobe = ['Jednokrevetna', 'Dvokrevetna', 'Apartman']
-    if (dostupneSobe.includes(tipSobe)) {
-      this.soba = tipSobe
-      console.log(`${tipSobe} uspješno izabran/a.`)
+  koristiUslugu(nazivUsluge) {
+    if (this.usluge.has(nazivUsluge)) {
+      this.usluge.get(nazivUsluge).brojKoristenja++
+      console.log(
+        `Usluga "${nazivUsluge}" je korišćena. Ukupan broj korišćenja: ${
+          this.usluge.get(nazivUsluge).brojKoristenja
+        }`
+      )
     } else {
       console.log(
-        `Neispravan tip sobe. Molimo izaberite jednu od ponuđenih opcija: ${tipSobe.join(
-          `, `
-        )}.`
+        `Usluga "${nazivUsluge}" nije dodata. Molimo vas da je prvo dodate.`
       )
     }
-  } //true/false za sobe?
+  }
+  trenutneUsluge() {
+    console.log(`Usluge koje se trenutno koriste su: `)
+    this.usluge.forEach((usluga) => {
+      console.log(`${usluga.tip}: ${usluga.cijenaPoDanu} KM`)
+    })
+  } //clg usluge koje se koriste
+
+  promjeniSobu(noviBrojSobe, hotel) {
+    if (!hotel.sobe.has(noviBrojSobe)) {
+      console.log('Neispravan broj sobe. Molimo izaberite validnu sobu.')
+      return false
+    }
+    let novaSoba = hotel.sobe.get(noviBrojSobe)
+    let staraSoba = this.brojSobe
+    if (!novaSoba.dostupnost) {
+      console.log(
+        `Soba ${noviBrojSobe} nije dostupna. Molimo izaberite drugu sobu.`
+      )
+      return false
+    } else {
+      this.brojSobe = novaSoba.brojSobe
+      this.tipSobe = novaSoba.tipSobe
+      this.soba = novaSoba
+      novaSoba.rezervisi()
+      staraSoba.oslobodi()
+    }
+  }
+
   odjaviSe() {
     this.soba = null
     this.usluge = []
-    this.debt = 0
+    this.dug = 0
     console.log(`${ime} se odjavio/la iz hotela.`)
   }
-}
+} //true/false za sobe?
 
-// Testiranje programa
-let hotel = new Hotel('Hotel Sunce', 'Kralja Tomislava 54, Neum', 100)
-hotel.dodajSobe(1, 'Jednokrevetna', 20, '11')
-hotel.dodajSobe(2, 'Dvokrevetna', 40, '12')
-
-hotel.dodajUslugu('Teretana', 10, '1')
-hotel.dodajUslugu('Kino', 10, '2')
-hotel.dodajUslugu('Restoran', 20, '3')
-
-hotel.ispisSoba()
-hotel.ispisUsluga()
-
-let admin = new Admin('Emina')
-
-admin.registracijaKorisnika({
-  brojLicneKarte: '15ODSP',
-  brojSobe: 1,
-  godine: 18,
-  hotel: hotel,
-  ime: 'Alma',
-  korisnickoIme: 'almamumic',
-  lozinka: '123456789',
-  prezime: 'Mumić',
-  spol: 'Ž',
-  tipSobe: 'Jednokrevetna',
-  vrijemePrijaveUHotel: '12.11.2024',
-})
-
-let alma = hotel.korisnici.get('15OK043')
-
-hotel.ispisKorisnika()
-
-let teretana = hotel.usluge.get('1')
-let kino = hotel.usluge.get('2')
-
-admin.urediKorisnika(alma, 2, 'Dvokrevetna', teretana, (usluga) => {
-  alma.usluge.push(usluga)
-})
-
-admin.urediKorisnickeUsluge(alma, kino, (usluga) => alma.usluge.push(usluga))
-
-hotel.ispisKorisnika()
-admin.izdajRacun(alma)
-
-console.log(hotel.sobe)
-console.log('probica')
+module.exports = { Hotel, Soba, Usluga, Admin, Korisnik }
