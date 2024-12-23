@@ -16,8 +16,10 @@ class Hotel {
     if (this.statusSistema) {
       let soba = new Soba(broj, tip, cijena)
       this.sobe.set(broj, soba)
+      return this.sobe.get(broj)
     } else {
       console.log('Sistem nije aktivan, nije moguće dodavati sobe.')
+      return null
     }
   }
 
@@ -94,7 +96,6 @@ class Soba {
 
 class Usluga {
   brojKoristenja
-  datumPocetka
   constructor(tip, cijenaPoDanu) {
     this.tip = tip
     this.cijenaPoDanu = cijenaPoDanu
@@ -114,7 +115,6 @@ class Admin {
     godine,
     brojSobe,
     tipSobe,
-    vrijemePrijaveUHotel,
     korisnickoIme,
     lozinka,
     soba,
@@ -140,7 +140,6 @@ class Admin {
       godine,
       brojSobe,
       tipSobe,
-      vrijemePrijaveUHotel,
       korisnickoIme,
       lozinka,
       soba
@@ -149,6 +148,7 @@ class Admin {
     hotel.korisnici.set(brojLicneKarte, korisnik)
     hotel.sobe.get(brojSobe).rezervisi()
     console.log(`Korisnik ${ime} ${prezime} uspješno registrovan.`)
+    return korisnik
   }
   //Uredjivanje korisnika
   urediKorisnika(korisnik, brojSobe, tipSobe, akcija, usluga) {
@@ -231,17 +231,17 @@ class Admin {
     // Ispis računa
     console.log(`Račun za korisnika: ${korisnik.ime} ${korisnik.prezime}`)
     console.log(`_____________________________________________`)
-    console.log(`Dug za sobu: ${dugZaSobu} KM`)
+    console.log(
+      `Dug za sobu: ${dugZaSobu} KM (${korisnik.soba.cijena} KM/dan x ${korisnik.daniBoravka})`
+    )
 
-    if (korisnik.usluge.length > 0) {
-      console.log(`Usluge:`)
-      korisnik.usluge.forEach((usluga) => {
-        const dugZaUslugu = usluga.cijenaPoDanu * usluga.brojKoristenja
-        console.log(
-          `${usluga.tip}: ${dugZaUslugu} KM (${usluga.cijenaPoDanu} KM/dan x ${usluga.brojKoristenja} dana)`
-        )
-      })
-    }
+    console.log(`Usluge:`)
+    korisnik.usluge.forEach((usluga) => {
+      const dugZaUslugu = usluga.cijenaPoDanu * usluga.brojKoristenja
+      console.log(
+        `${usluga.tip}: ${dugZaUslugu} KM (${usluga.cijenaPoDanu} KM/dan x ${usluga.brojKoristenja} dana)`
+      )
+    })
 
     console.log(`_____________________________________________`)
     console.log(`Ukupno dugovanje: ${ukupnoDugovanje} KM`)
@@ -253,7 +253,7 @@ class Korisnik {
   #korisnickoIme
   #lozinka
   usluge = new Map()
-  daniBoravka = 0
+  daniBoravka
 
   constructor(
     ime,
@@ -263,7 +263,6 @@ class Korisnik {
     godine,
     brojSobe,
     tipSobe,
-    vrijemePrijaveUHotel,
     korisnickoIme,
     lozinka,
     soba
@@ -275,11 +274,11 @@ class Korisnik {
     this.godine = godine
     this.brojSobe = brojSobe
     this.tipSobe = tipSobe
-    this.vrijemePrijaveUHotel = vrijemePrijaveUHotel
     this.#korisnickoIme = korisnickoIme
     this.#lozinka = lozinka
     this.soba = soba
     this.dug = 0
+    this.daniBoravka = 1
   }
 
   provjeriDug() {
@@ -290,8 +289,7 @@ class Korisnik {
     if (hotel.usluge.has(imeUsluge)) {
       let narucenaUsluga = hotel.usluge.get(imeUsluge)
       this.usluge.set(imeUsluge, narucenaUsluga)
-      ;(narucenaUsluga.brojKoristenja = 0),
-        (narucenaUsluga.datumPocetka = new Date())
+      narucenaUsluga.brojKoristenja = 0
     } else {
       console.log('Usluga ne postoji u hotelu')
     }
