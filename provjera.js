@@ -13,8 +13,6 @@ hotel.dodajSobe(103, 'Trokrevetna', 150)
 hotel.dodajUslugu('Teretana', 10)
 hotel.dodajUslugu('Kino', 20)
 
-hotel.ispisSoba()
-hotel.ispisUsluga()
 let soba101 = hotel.sobe.get(101)
 
 const admin = new Admin('Emina')
@@ -33,11 +31,12 @@ admin.registracijaKorisnika(
   hotel
 )
 
-hotel.ispisKorisnika()
-hotel.ispisSoba()
-
 const emina = hotel.korisnici.get('OK123')
 emina.naruciUslugu('Teretana', hotel)
 emina.koristiUslugu('Teretana')
 emina.naruciUslugu('Kino', hotel)
-emina.trenutneUsluge()
+emina.koristiUslugu('Kino')
+emina.koristiUslugu('Kino')
+emina.produziDanBoravka()
+emina.produziDanBoravka()
+admin.izdajRacun(emina)

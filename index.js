@@ -290,7 +290,7 @@ class Korisnik {
     if (hotel.usluge.has(imeUsluge)) {
       let narucenaUsluga = hotel.usluge.get(imeUsluge)
       this.usluge.set(imeUsluge, narucenaUsluga)
-      ;(narucenaUsluga.brojKoristenja = 1),
+      ;(narucenaUsluga.brojKoristenja = 0),
         (narucenaUsluga.datumPocetka = new Date())
     } else {
       console.log('Usluga ne postoji u hotelu')
@@ -326,7 +326,7 @@ class Korisnik {
       return false
     }
     let novaSoba = hotel.sobe.get(noviBrojSobe)
-    let staraSoba = this.brojSobe
+    let staraSoba = hotel.sobe.get(this.brojSobe)
     if (!novaSoba.dostupnost) {
       console.log(
         `Soba ${noviBrojSobe} nije dostupna. Molimo izaberite drugu sobu.`
@@ -346,6 +346,9 @@ class Korisnik {
     this.usluge = []
     this.dug = 0
     console.log(`${ime} se odjavio/la iz hotela.`)
+  }
+  produziDanBoravka() {
+    this.daniBoravka++
   }
 } //true/false za sobe?
 
