@@ -151,20 +151,20 @@ class Admin {
     return korisnik
   }
   //Uredjivanje korisnika
-  urediKorisnika(korisnik, brojSobe, tipSobe, akcija, usluga) {
+  urediKorisnika(korisnik, brojSobe, tipSobe, soba, akcija, imeUsluge, hotel) {
     korisnik.brojSobe = brojSobe
     korisnik.tipSobe = tipSobe
-
-    if (akcija === 'obrisi') {
-      korisnik.usluge.has(usluga)
-        ? korisnik.usluge.delete(usluga)
-        : console.log(`Usluga ${usluga} nije pronadjena`)
-    } else if (akcija === 'dodaj') {
-      korisnik.usluge.has(usluga)
-        ? console.log('Korisnik vec koristi tu uslugu')
-        : korisnik.usluge.set(usluga)
+    let staraSoba = korisnik.soba
+    let novaSoba = soba
+    staraSoba.oslobodi()
+    novaSoba.rezervisi()
+    korisnik.soba = novaSoba
+    if (akcija === 'dodaj') {
+      korisnik.naruciUslugu(imeUsluge, hotel)
+    } else if (akcija === 'obrisi') {
+      korisnik.usluge.delete(imeUsluge)
     } else {
-      console.log('Nepoznata akcija. Koristite "dodaj" ili "obrisi".')
+      console.log('Nepravilan unos kacije')
     }
   }
   //Brisanje korisnika iz sistema
@@ -201,7 +201,7 @@ class Admin {
     console.log(hotel.aktivniKorisnici)
   }
 
-  pretrazikorisnika(hotel, brojLicneKarte) {
+  pretraziKorisnika(hotel, brojLicneKarte) {
     if (hotel.korisnici.has(brojLicneKarte)) {
       const korisnik = hotel.korisnici.get(brojLicneKarte)
       console.log('Korisnik pronadjen:', korisnik)
@@ -225,7 +225,7 @@ class Admin {
       ukupnoDugovanje += usluga.cijenaPoDanu * usluga.brojKoristenja
     })
 
-    // Ažuriranje korisnikovog ukupnog duga
+    // ADodavanje duga u objekat korisnika
     korisnik.dug = ukupnoDugovanje
 
     // Ispis računa
