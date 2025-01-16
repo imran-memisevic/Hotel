@@ -182,7 +182,7 @@ class Admin {
     console.log('korisnik izlogovan')
   }
 
-  izlogujSveKorisnike() {
+  izlogujSveKorisnike(hotel) {
     hotel.aktivniKorisnici.clear()
     console.log('Svi korisnici su izlogovani')
   }
@@ -336,12 +336,13 @@ class Korisnik {
       this.soba = novaSoba
       novaSoba.rezervisi()
       staraSoba.oslobodi()
+      return true
     }
   }
 
   odjaviSe() {
     this.soba = null
-    this.usluge = []
+    this.usluge = new Map()
     this.dug = 0
     console.log(`${ime} se odjavio/la iz hotela.`)
   }
