@@ -34,4 +34,7 @@ emina.naruciUslugu('Kino', hotel)
 emina.produziDanBoravka()
 
 admin.izdajRacun(emina)
+admin.prijavaKorisnika(hotel, 'OK123')
+admin.provjeraAktivnihKorisnika(hotel)
+admin.izlogujKorisnika(hotel, 'OK123')
 admin.provjeraAktivnihKorisnika(hotel)

@@ -150,6 +150,16 @@ class Admin {
     console.log(`Korisnik ${ime} ${prezime} uspješno registrovan.`)
     return korisnik
   }
+
+  prijavaKorisnika(hotel, brojLicneKarte) {
+    if (hotel.korisnici.has(brojLicneKarte)) {
+      let korisnik = hotel.korisnici.get(brojLicneKarte)
+      hotel.aktivniKorisnici.set(brojLicneKarte, korisnik)
+      console.log(`Korisnik ${korisnik.ime} ${korisnik.prezime} je prijavljen.`)
+    } else {
+      console.log('Korisnik nije pronađen.')
+    }
+  }
   //Uredjivanje korisnika
   urediKorisnika(korisnik, brojSobe, tipSobe, soba, akcija, imeUsluge, hotel) {
     korisnik.brojSobe = brojSobe
@@ -331,7 +341,7 @@ class Korisnik {
       )
       return false
     } else {
-      this.brojSobe = novaSoba.brojSobe
+      this.brojSobe = novaSoba.broj
       this.tipSobe = novaSoba.tipSobe
       this.soba = novaSoba
       novaSoba.rezervisi()
