@@ -344,7 +344,7 @@ class Korisnik {
     this.soba = null
     this.usluge = new Map()
     this.dug = 0
-    console.log(`${ime} se odjavio/la iz hotela.`)
+    console.log(`${this.ime} se odjavio/la iz hotela.`)
   }
   produziDanBoravka() {
     this.daniBoravka++
